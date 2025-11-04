@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Archivo — Dashboard</title>
+</head>
+<body>
+  <nav>
+    <h1>Dashboard</h1>
+    <span id="userDisplay"></span>
+    <button id="logoutBtn">Logout</button>
+  </nav>
+
+  <main>
+    <h2>Welcome to your Game Catalog, <span id="name"></span>!</h2>
+    <p>This is your personalized dashboard.</p>  
+  </main>
+  
+  <section id="search-section">
+    <input type="text" id="searchInput" placeholder="Search for a game, genre, etc.">
+    <button id="searchBtn">Search</button>
+
+  <script src="auth.js"></script>
+  <script>
+    requireAuth(); // protect page
+    const user = currentUser();
+    document.getElementById("userDisplay").textContent = "Logged in as " + user;
+    document.getElementById("name").textContent = user;
+    document.getElementById("logoutBtn").onclick = logout;
+  </script>
+  
+  const mockGames = [
+  {title: "Halo 3", genre: "shooter", developer: "Bungie", platform: "Xbox 360", year: 2007}
+  ];
+  
+  const searchInput = document.getElementById("searchInput");
+  const searchBtn = document.getElementById("searchBtn");
+  const resultsDiv = document.getElementById("results");
+  
+  function searchGames() {
+  const query = searchInput.value.trim().toLowerCase();
+  resultsDiv.innerHTML="";
+  
+  if (query ==="") {
+  resultsDiv.InnerHTML = "<p>Enter to search.</p>";
+  return;
+  }
+  const results = mockGames.filter(game =>
+        game.title.toLowerCase().includes(query) ||
+        game.genre.toLowerCase().includes(query) ||
+        game.developer.toLowerCase().includes(query) ||
+        game.platform.toLowerCase().includes(query) ||
+        game.year.toString().includes(query)
+      );
+       if (results.length > 0) {
+        results.forEach(game => {
+          const card = document.createElement("div");
+          card.className = "game-card";
+          card.innerHTML = `
+            <h3>${game.title}</h3>
+            <p><strong>Genre:</strong> ${game.genre}</p>
+            <p><strong>Developer:</strong> ${game.developer}</p>
+            <p><strong>Platform:</strong> ${game.platform}</p>
+            <p><strong>Year:</strong> ${game.year}</p>
+          `;
+          resultsDiv.appendChild(card);
+        });
+      } else {
+        resultsDiv.innerHTML = "<p>No results found.</p>";
+      }
+    }
+
+    // Event listeners
+    searchBtn.addEventListener("click", searchGames);
+    searchInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") searchGames();
+    });
+    </script>  
+</body>
+</html>
